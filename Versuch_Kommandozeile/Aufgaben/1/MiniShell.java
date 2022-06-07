@@ -24,7 +24,7 @@ class MiniShell {
         String filePath = checkInput(input[0]);
 
         if(filePath != null) {
-          System.out.println("Path: " + filePath);
+          System.out.println("Full path: " + filePath);
           processing(input, filePath);
         }
         else {
@@ -66,15 +66,15 @@ class MiniShell {
 
   public void processing(String[] commands, String filePath) {
     int childPID = fork();
-    System.out.println("PID: " + childPID);
 
     if(childPID == 0) {
-      System.out.println("execv:");
+      System.out.print("Running execv for PID: " + childPID + "  ");
       execv(filePath, commands);
       exit(0);
     }
     else if(childPID > 0){
       int[] status = new int[1];
+      System.out.println("Running waitpid for PID: " + childPID + "  ");
       waitpid(childPID, status, 0);
 
     }
@@ -88,7 +88,6 @@ class MiniShell {
 
     MiniShell s = new MiniShell();
 
-    System.out.println("Hello, World!");
-    // exit(0);
+    System.out.println("Leaving MiniShell.");
   }
 }
