@@ -21,7 +21,7 @@
 // alle unbedingt mit "volatile" !!!
 //-----------------------------------------------------------------------------
 
-semaphore mein_semaphor;
+volatile semaphore mein_semaphor;
 
 // implementiert wird eine datenbank in einer temporaeren Datei mit
 // fuenf datensaetzen (je ein int)
