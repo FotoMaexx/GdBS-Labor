@@ -37,7 +37,8 @@ void stop_animation(void) {
 // alle unbedingt mit "volatile" !!!
 //-----------------------------------------------------------------------------
 
-semaphore mein_semaphor;
+volatile semaphore buffer_write_mutex;
+volatile semaphore buffer_reader_mutex;
 
 // der ringpuffer:
 
@@ -73,11 +74,11 @@ void test_setup(void) {
   // zur Fehlererkennung
   sum=0;
 
+  buffer_write_mutex = sem_init(1);
+  buffer_reader_mutex = sem_init(1);
+
   // dient der Visualisierung
   start_animation();
-
-  // semaphor
-  mein_semaphor = sem_init(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -104,21 +105,20 @@ void test_end(void) {
 
 void writer(long my_id) {
   int i;
-  sem_p(mein_semaphor);
   for (i=1; i<=NUMBERS_CREATED_PER_WRITER; i++) {
 
-    // busy wait:
-    while ((ringpuffer.schreib_index+1)%SIZE==ringpuffer.lese_index) {
-      //do nothing
+    while (1) {
+        sem_p(buffer_write_mutex);
+        if(! ((ringpuffer.schreib_index+1)%SIZE==ringpuffer.lese_index)) {
+            ringpuffer.feld[ringpuffer.schreib_index] = i;
+            ringpuffer.schreib_index = (ringpuffer.schreib_index + 1) % SIZE;
+            show_animation(1, my_id, i);
+            sem_v(buffer_write_mutex);
+            break;
+        }
+        sem_v(buffer_write_mutex);
     }
-
-    ringpuffer.feld[ringpuffer.schreib_index] = i;
-    ringpuffer.schreib_index = (ringpuffer.schreib_index + 1) % SIZE;
-
-
-    show_animation(1, my_id, i);
   }
-  sem_v(mein_semaphor);
 }
 
 void reader(long my_id) {
@@ -132,20 +132,23 @@ void reader(long my_id) {
     // zaehlt die gelesenen zeichen
     counter++;
 
-    // busy wait:
-    while (ringpuffer.schreib_index==ringpuffer.lese_index) {
-      //do nothing
+    while (1) {
+      sem_p(buffer_reader_mutex);
+      if(! (ringpuffer.schreib_index==ringpuffer.lese_index)) {
+        int n = ringpuffer.feld[ringpuffer.lese_index];
+        ringpuffer.lese_index = (ringpuffer.lese_index + 1) % SIZE;
+
+        sum +=n;
+
+        if(counter == writers * NUMBERS_CREATED_PER_WRITER) {
+          return;
+        }
+
+        show_animation(0, my_id, counter);
+        sem_v(buffer_reader_mutex);
+        break;
+      }
+      sem_v(buffer_reader_mutex);
     }
-
-    int n=ringpuffer.feld[ringpuffer.lese_index];
-    ringpuffer.lese_index = (ringpuffer.lese_index + 1) % SIZE;
-
-    // summiert gelesenen Zahlen fuer die Testausgabe
-    sum+=n;
-
-    if (counter==writers*NUMBERS_CREATED_PER_WRITER) { return; }
-
-
-    show_animation(0, my_id, counter);
   }
 }
