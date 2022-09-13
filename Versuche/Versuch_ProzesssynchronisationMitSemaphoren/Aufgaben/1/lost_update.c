@@ -15,7 +15,7 @@
 volatile int global_var=0;
 
 // semaphore deklariert man hier z.B. wie folgt:
-  semaphore mein_semaphor;
+semaphore mein_semaphor;
 
 //-----------------------------------------------------------------------------
 // bevor der test beginnt wird test_setup() einmal aufgerufen
@@ -29,7 +29,7 @@ void test_setup(void) {
   readers=0;
   writers=WORKERS;
   // initialisieren von sempahoren hier z.B. wie folgt:
-    mein_semaphor = sem_init(1);
+  mein_semaphor = sem_init(1);
 }
 
 //-----------------------------------------------------------------------------
