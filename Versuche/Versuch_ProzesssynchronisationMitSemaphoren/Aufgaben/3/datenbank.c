@@ -21,7 +21,7 @@
 // alle unbedingt mit "volatile" !!!
 //-----------------------------------------------------------------------------
 
-volatile semaphore mein_semaphor;
+volatile semaphore buffer_write_mutex;
 
 // implementiert wird eine datenbank in einer temporaeren Datei mit
 // fuenf datensaetzen (je ein int)
@@ -44,7 +44,7 @@ void test_setup(void) {
   close(db);
 
   srandom(time(NULL));
-  mein_semaphor = sem_init(1);
+  buffer_write_mutex = sem_init(1);
 }
 
 //-----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void reader(long my_id) {
 }
 
 void writer(long my_id) {
-  sem_p(mein_semaphor);
+  sem_p(buffer_write_mutex);
   int i;
   int db=open(db_filename, O_RDWR);
   for (i=0; i<INCREMENTS_PRO_WORKER; i++) {
@@ -92,5 +92,5 @@ void writer(long my_id) {
     write(db, &val, sizeof(int));
   }
   close(db);
-  sem_v(mein_semaphor);
+  sem_v(buffer_write_mutex);
 }
