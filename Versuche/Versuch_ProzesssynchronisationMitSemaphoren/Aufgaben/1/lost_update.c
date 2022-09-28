@@ -60,7 +60,6 @@ void reader(long my_id) {
 void writer(long my_id) {
   int i;
   for (i=0; i<A_BIG_NUMBER; i++) {
-    for (int x=0; x<888; x++); // "lange Rechnung"
 
     sem_p(global_var_mutex);
     global_var += 1;

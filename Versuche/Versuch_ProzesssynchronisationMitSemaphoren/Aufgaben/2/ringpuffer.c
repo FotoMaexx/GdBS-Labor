@@ -39,6 +39,7 @@ void stop_animation(void) {
 
 volatile semaphore buffer_write_mutex;
 volatile semaphore buffer_reader_mutex;
+volatile semaphore handshake;
 
 // der ringpuffer:
 
@@ -76,6 +77,7 @@ void test_setup(void) {
 
   buffer_write_mutex = sem_init(1);
   buffer_reader_mutex = sem_init(1);
+  handshake = sem_init(0);
 
   // dient der Visualisierung
   start_animation();
@@ -111,6 +113,7 @@ void writer(long my_id) {
         sem_p(buffer_write_mutex);
         if(! ((ringpuffer.schreib_index+1)%SIZE==ringpuffer.lese_index)) {
             ringpuffer.feld[ringpuffer.schreib_index] = i;
+            sem_v(handshake);
             ringpuffer.schreib_index = (ringpuffer.schreib_index + 1) % SIZE;
             show_animation(1, my_id, i);
             sem_v(buffer_write_mutex);
@@ -135,6 +138,7 @@ void reader(long my_id) {
     while (1) {
       sem_p(buffer_reader_mutex);
       if(! (ringpuffer.schreib_index==ringpuffer.lese_index)) {
+        sem_p(handshake);
         int n = ringpuffer.feld[ringpuffer.lese_index];
         ringpuffer.lese_index = (ringpuffer.lese_index + 1) % SIZE;
 

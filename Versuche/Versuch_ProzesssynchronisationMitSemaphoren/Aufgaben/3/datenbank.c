@@ -22,6 +22,7 @@
 //-----------------------------------------------------------------------------
 
 volatile semaphore buffer_write_mutex;
+volatile semaphore database_sem[4];
 
 // implementiert wird eine datenbank in einer temporaeren Datei mit
 // fuenf datensaetzen (je ein int)
@@ -45,6 +46,9 @@ void test_setup(void) {
 
   srandom(time(NULL));
   buffer_write_mutex = sem_init(1);
+  for (int i = 0; i < 5; i++) {
+    database_sem[i] = sem_init(0);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -85,11 +89,13 @@ void writer(long my_id) {
   for (i=0; i<INCREMENTS_PRO_WORKER; i++) {
     int idx=random()%5; // 0..4 == diesen zufaelligen Datensatz hochzaehlen
     int val;
+    sem_v(database_sem[idx]);
     lseek(db, idx*sizeof(int), SEEK_SET);
     read(db, &val, sizeof(int));
     val++;
     lseek(db, idx*sizeof(int), SEEK_SET);
     write(db, &val, sizeof(int));
+    sem_p(database_sem[idx]);
   }
   close(db);
   sem_v(buffer_write_mutex);

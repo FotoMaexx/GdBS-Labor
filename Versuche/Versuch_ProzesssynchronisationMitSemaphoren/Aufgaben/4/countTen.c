@@ -15,7 +15,7 @@ volatile int global_var=0;
 volatile int expectedGoal = 10000;
 
 // semaphore deklariert man hier z.B. wie folgt:
-semaphore global_var_mutex;
+volatile semaphore worker_sem[9];
 
 //-----------------------------------------------------------------------------
 // bevor der test beginnt wird test_setup() einmal aufgerufen
@@ -29,7 +29,11 @@ void test_setup(void) {
   readers=0;
   writers=WORKERS;
   // initialisieren von sempahoren hier z.B. wie folgt:
-  global_var_mutex = sem_init(1);
+  worker_sem[0] = sem_init(1);
+  for(int i= 1; i <= 9; i++) {
+    worker_sem[i] = sem_init(0);
+  }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -63,13 +67,17 @@ void reader(long my_id) {
 
 // im writer semaphore-operationen einbauen, also so was wie:
 void writer(long my_id) {
-  int i;
   while (!(expectedGoal == global_var)) {
-    sem_p(global_var_mutex);
-    if ((my_id == lastDigit(global_var)) && global_var != 10000) {
+    if(sem_count(worker_sem[my_id]) == 1 && global_var != 10000) {
       global_var += 1;
-        printf("Worker %li: %i\n", my_id, global_var);
+      printf("Worker %li: %i\n", my_id, global_var);
+      if(my_id == 9) {
+        sem_v(worker_sem[0]);
+      }
+      else {      
+        sem_v(worker_sem[my_id+1]);
+      }
+      sem_p(worker_sem[my_id]);
     }
-    sem_v(global_var_mutex);
   }
 }

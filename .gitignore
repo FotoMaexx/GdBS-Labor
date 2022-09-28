@@ -2,3 +2,4 @@
 .DS_Store
 *.class
 GdB-Labor
+.vscode/c_cpp_properties.json
