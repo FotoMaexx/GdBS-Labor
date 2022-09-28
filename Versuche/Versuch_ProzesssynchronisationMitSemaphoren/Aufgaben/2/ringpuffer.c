@@ -38,8 +38,8 @@ void stop_animation(void) {
 //-----------------------------------------------------------------------------
 
 volatile semaphore buffer_write_mutex;
-volatile semaphore buffer_reader_mutex;
 volatile semaphore handshake;
+volatile semaphore handshake2;
 
 // der ringpuffer:
 
@@ -76,8 +76,8 @@ void test_setup(void) {
   sum=0;
 
   buffer_write_mutex = sem_init(1);
-  buffer_reader_mutex = sem_init(1);
   handshake = sem_init(0);
+  handshake2 = sem_init(1);
 
   // dient der Visualisierung
   start_animation();
@@ -110,11 +110,13 @@ void writer(long my_id) {
   for (i=1; i<=NUMBERS_CREATED_PER_WRITER; i++) {
 
     while (1) {
+
         sem_p(buffer_write_mutex);
         if(! ((ringpuffer.schreib_index+1)%SIZE==ringpuffer.lese_index)) {
+            sem_p(handshake2);
             ringpuffer.feld[ringpuffer.schreib_index] = i;
-            sem_v(handshake);
             ringpuffer.schreib_index = (ringpuffer.schreib_index + 1) % SIZE;
+            sem_v(handshake);
             show_animation(1, my_id, i);
             sem_v(buffer_write_mutex);
             break;
@@ -136,23 +138,20 @@ void reader(long my_id) {
     counter++;
 
     while (1) {
-      sem_p(buffer_reader_mutex);
       if(! (ringpuffer.schreib_index==ringpuffer.lese_index)) {
         sem_p(handshake);
         int n = ringpuffer.feld[ringpuffer.lese_index];
         ringpuffer.lese_index = (ringpuffer.lese_index + 1) % SIZE;
+        sem_v(handshake2);
 
         sum +=n;
 
         if(counter == writers * NUMBERS_CREATED_PER_WRITER) {
           return;
         }
-
         show_animation(0, my_id, counter);
-        sem_v(buffer_reader_mutex);
         break;
       }
-      sem_v(buffer_reader_mutex);
     }
   }
 }
