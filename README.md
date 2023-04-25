@@ -1,2 +1,2 @@
 # GDBS-Labor
-Lab course in the 4th semester at the University of Ulm
+Lab course in the 2nd semester at Ulm University
