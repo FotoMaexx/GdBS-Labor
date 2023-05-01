@@ -68,13 +68,13 @@ class MiniShell {
     int childPID = fork();
 
     if(childPID == 0) {
-      System.out.print("Running execv for PID: " + childPID + "  ");
+      // System.out.print("Running execv for PID: " + childPID + "  ");
       execv(filePath, commands);
       exit(0);
     }
     else if(childPID > 0){
       int[] status = new int[1];
-      System.out.println("Running waitpid for PID: " + childPID + "  ");
+      // System.out.println("Running waitpid for PID: " + childPID + "  ");
       waitpid(childPID, status, 0);
 
     }
