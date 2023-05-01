@@ -151,8 +151,6 @@ class MiniShell {
         return null;
     }
     
-
-    // Standard-Input
     public void stdin(String[] in, int pos) {
         if(pos < in.length - 2) {
             if(in[pos+2].equals(">")) {
@@ -176,7 +174,6 @@ class MiniShell {
         }
     }
 
-    // Standard-Output
     public void stdout(String[] in, int pos) {
         
         if(pos < in.length - 1 && !(in[pos+1].equals("-")) && !(in[pos+1].equals(">")) && !(in[pos+1].equals("<"))) {
