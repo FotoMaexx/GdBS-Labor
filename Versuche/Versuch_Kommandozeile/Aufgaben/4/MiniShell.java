@@ -18,7 +18,7 @@ class MiniShell {
     public String prompt = "Eingabe: ";
     public final String[] PATH = System.getenv("PATH").split(":");
     public Boolean close = true;
-    public byte[] buffer = new byte[50];
+    public byte[] buffer = new byte[50]; // Buffer for head
 
     public MiniShell() {
         while (close) {
