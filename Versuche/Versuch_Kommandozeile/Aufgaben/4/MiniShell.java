@@ -229,7 +229,6 @@ class MiniShell {
         
         // Get actual directory
         String startingdir = System.getProperty("user.dir");
-
         String pattern = input[field];
         
         // replacing * with .* for regex
