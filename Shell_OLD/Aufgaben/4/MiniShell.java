@@ -261,7 +261,7 @@ class MiniShell {
         }
 
         if (listFiles.length > 0) {
-            System.out.println("More than 1 File: " +Arrays.toString(listFiles));
+            System.out.println("ERROR: More than 1 File fitting the name.");
         }
 
         return null;
