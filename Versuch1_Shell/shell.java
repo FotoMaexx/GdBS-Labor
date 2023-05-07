@@ -31,18 +31,17 @@ class Shell {
             else {
                 String filePath = checkInput(input[0]);
                 if(filePath != null) {
-                    ArrayList<String> leftCommands = pipes(input);
-                    System.err.println(leftCommands.toString());
+                    ArrayList<String> commandList = pipes(input);
 
-                    String stdout = leftCommands.remove(leftCommands.size()-1);
-                    String stdin = leftCommands.remove(leftCommands.size()-1);
+                    String stdout = commandList.remove(commandList.size()-1);
+                    String stdin = commandList.remove(commandList.size()-1);
 
-                    input = leftCommands.toArray(new String[0]);
+                    input = commandList.toArray(new String[0]);
 
                     processing(input, filePath, stdin, stdout);
                 }
                 else {
-                    System.out.println("ERROR: No such Path!");
+                    System.err.println("ERROR: No such Path!");
                 }
             }
         }
@@ -50,12 +49,17 @@ class Shell {
     // ----------------------------------------------------------------------------
     
     // ----------------------------------------------------------------------------
-    // Pipes Arraylist for ">" and "<" (Aufgabe 2)
+    // Pipes Arraylist for '>' and '<':
+    // Trennt die Eingabezeichenfolge in Befehle, Standard-Eingabe und Standard-Ausgabe auf. 
+    //
+    // '<': Der folgende Parameter wird als Standard-INPUT interpretiert.
+    // '>': Der folgende Parameter wird als Standard-OUTPUT interpretiert.
+    // Die restlichen Parameter werden in eine ArrayList leftParams aufgenommen und zurückgegeben.
     // ----------------------------------------------------------------------------
     public ArrayList<String> pipes(String[] input) {
         String stdIn = null;
         String stdOut = null;
-        ArrayList<String> paramsLeft = new ArrayList<String>(input.length);
+        ArrayList<String> leftParams = new ArrayList<String>(input.length);
 
         for (int i = 0; i < input.length; i++) {
             if(input[i].contains("<")) {
@@ -70,20 +74,21 @@ class Shell {
                 }
             }
             else {
-                paramsLeft.add(input[i]);
+                leftParams.add(input[i]);
             }
 
 
         }
 
-        paramsLeft.add(stdIn);
-        paramsLeft.add(stdOut);
-        return paramsLeft;
+        leftParams.add(stdIn);
+        leftParams.add(stdOut);
+        return leftParams;
     }
     // ----------------------------------------------------------------------------
 
     // ----------------------------------------------------------------------------
-    // Input Line String 
+    // Input Line:
+    // Funktion zur Eingabe der Commands.
     // ----------------------------------------------------------------------------
     public String[] inputLine() {
         System.out.println();
@@ -95,7 +100,11 @@ class Shell {
     // ----------------------------------------------------------------------------
 
     // ----------------------------------------------------------------------------
-    // Check Input Path
+    // Check Input Path:
+    // Überprüft, ob der Pfad zu einer ausführbaren Datei im aktuellen Verzeichnis oder im Umgebungsvariable-Pfad vorhanden ist.
+    // 
+    // Wenn der Pfad gefunden wird, wird der absolute Pfad zurückgegeben. 
+    // Andernfalls wird null zurückgegeben.
     // ----------------------------------------------------------------------------
     public String checkInput(String filePath) {
     
@@ -119,7 +128,13 @@ class Shell {
     // ----------------------------------------------------------------------------
 
     // ----------------------------------------------------------------------------
-    // Processing Routine
+    // Processing Routine:
+    // Führt die Befehle aus, die vom Benutzer eingegeben wurden.
+    //
+    // Dazu wird ein neuer Prozess erstellt (fork), der die Befehle ausführt. 
+    // Wenn Standard-Eingabe oder Standard-Ausgabe vorhanden sind, werden sie entsprechend umgeleitet (open, close). 
+    // Der Pfad zur ausführbaren Datei und die Befehlsparameter werden an execv übergeben. 
+    // Wenn der Prozess abgeschlossen ist, gibt waitpid den Exit-Status zurück.
     // ----------------------------------------------------------------------------
     public void processing(String[] commands, String filePath, String stdin, String stdout) {
         //PID of Child
@@ -127,12 +142,10 @@ class Shell {
         //Child-Process
         if(childPID == 0) {
             if(stdin != null) {
-                System.err.println("STDIN");
                 close(STDIN_FILENO);
                 open(stdin, O_RDONLY);
             }
             if(stdout != null) {
-                System.err.println("STDOUT");
                 close(STDOUT_FILENO);
                 open(stdout, O_RDWR  | O_CREAT);
             }
