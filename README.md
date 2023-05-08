@@ -1,5 +1,7 @@
 # GDBS-Labor
-**Lab course in the 2nd semester at Ulm University.**
+**Lab course in the 2nd semester at Ulm University.**<br/>
+<br/>
+Alle Aufgabenstellungen stehen ausführlich im der Datei
 
 **Versuch 1: Shell** <br/>
 Eine kleine Version der bekannten Shell.<br/>
