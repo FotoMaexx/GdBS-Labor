@@ -4,11 +4,16 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.PathMatcher;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardCopyOption.*;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.nio.file.*;
+import java.util.List;
+import java.util.ArrayList;
+
 
 import static cTools.KernelWrapper.*;
 
@@ -17,6 +22,7 @@ class Shell {
     public String prompt = "Eingabe: ";
     public final String[] PATH = System.getenv("PATH").split(":");
     public Boolean close = true;
+    private final Scanner inputScanner = new Scanner(System.in);
 
     // ----------------------------------------------------------------------------
     // Main Shell Function
@@ -24,7 +30,9 @@ class Shell {
     public Shell() {
         while (close) {
             // Input into String
-            String[] input = inputLine();
+            List<String> inputList = inputLine();
+            String[] input = inputList.toArray(new String[0]);
+
             if (input[0].equals("close") || input[0].equals("exit")) {
                 close = false;
             }
@@ -45,6 +53,7 @@ class Shell {
                 }
             }
         }
+        inputScanner.close();
     }
     // ----------------------------------------------------------------------------
     
@@ -90,13 +99,24 @@ class Shell {
     // Input Line:
     // Funktion zur Eingabe der Commands.
     // ----------------------------------------------------------------------------
-    public String[] inputLine() {
+    public List<String> inputLine() {
         System.out.println();
         System.out.println(prompt);
 
-        Scanner input = new Scanner(System.in);
-        return input.nextLine().split(" ");
+        String[] inputs = inputScanner.nextLine().split(" ");
+
+        List<String> expandedInputs = new ArrayList<>();
+        for(String s : inputs) {
+            if(s.contains("*") || s.contains("?")) {
+                expandedInputs.addAll(expandWildcards(s));
+            } else {
+                expandedInputs.add(s);
+            }
+        }
+
+        return expandedInputs;
     }
+
     // ----------------------------------------------------------------------------
 
     // ----------------------------------------------------------------------------
@@ -168,5 +188,22 @@ class Shell {
 
         System.out.println("Leaving Shell.");
         System.exit(0);
+    }
+
+    // ----------------------------------------------------------------------------
+
+    private List<String> expandWildcards(String pattern) {
+        List<String> matchedFiles = new ArrayList<>();
+        File dir = new File(System.getProperty("user.dir"));
+        File[] files = dir.listFiles();
+        if(files != null) {
+            String regex = pattern.replace("?", ".?").replace("*", ".*?");
+            for(File file : files) {
+                if(file.getName().matches(regex)) {
+                    matchedFiles.add(file.getName());
+                }
+            }
+        }
+        return matchedFiles;
     }
 }
