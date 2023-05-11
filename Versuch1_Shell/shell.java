@@ -91,6 +91,7 @@ class Shell {
     // ----------------------------------------------------------------------------
     // Input Line:
     // Funktion zur Eingabe der Commands.
+    // Erweitert durch Private Wildcard Funktion um Wildcards zu realisieren
     // ----------------------------------------------------------------------------
     public List<String> inputLine() {
         System.out.println();
