@@ -167,5 +167,6 @@ class Shell {
         Shell s = new Shell();
 
         System.out.println("Leaving Shell.");
+        System.exit(0);
     }
 }
