@@ -66,7 +66,7 @@ class Shell {
         for (int i = 0; i < input.length; i++) {
             if(input[i].contains("<")) {
                 if (i + 1 < input.length) {
-                    stdIn = input[i + 1];
+                    stdIn = input[i+1];
                     i++;
                 }
             } else if(input[i].contains(">")) {
