@@ -26,7 +26,7 @@ class Shell {
             List<String> inputList = inputLine();
             String[] input = inputList.toArray(new String[0]);
 
-            if (input[0].equals("close") || input[0].equals("exit")) {
+            if (input[0].equals("close")) {
                 close = false;
             }
             else {
