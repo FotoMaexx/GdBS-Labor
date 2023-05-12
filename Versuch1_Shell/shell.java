@@ -91,7 +91,7 @@ class Shell {
     // ----------------------------------------------------------------------------
     // Input Line:
     // Funktion zur Eingabe der Commands.
-    // Erweitert durch Private Wildcard Funktion um Wildcards zu realisieren
+    // Wildcard Funktion um Wildcards zu realisieren
     // ----------------------------------------------------------------------------
     public List<String> inputLine() {
         System.out.println();
@@ -107,7 +107,7 @@ class Shell {
                 expandedInputs.add(s);
             }
         }
-
+        
         return expandedInputs;
     }
 
@@ -174,18 +174,12 @@ class Shell {
             System.err.println("ERROR: Fork failed!");
         }
     }
+    
     // ----------------------------------------------------------------------------
-
-    public static void main(String[] args) {
-
-        Shell s = new Shell();
-
-        System.out.println("Leaving Shell.");
-        System.exit(0);
-    }
-
+    // Wildcard:
+    // Funktion zum erkennen der Wildcards welche dann mit Hilfe von regex
+    // gematcht und ersetzt werden.
     // ----------------------------------------------------------------------------
-
     private List<String> expandWildcards(String pattern) {
         List<String> matchedFiles = new ArrayList<>();
         File dir = new File(System.getProperty("user.dir"));
@@ -198,6 +192,24 @@ class Shell {
                 }
             }
         }
+        if(matchedFiles.isEmpty()) {
+            matchedFiles.add(pattern);
+        }
         return matchedFiles;
     }
+
+    // ----------------------------------------------------------------------------
+
+    public static void main(String[] args) {
+
+        Shell s = new Shell();
+
+        System.out.println("Leaving Shell.");
+        System.exit(0);
+    }
+
+    // ----------------------------------------------------------------------------
+
+
+    
 }
