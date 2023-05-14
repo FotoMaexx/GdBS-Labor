@@ -4,7 +4,8 @@
 Alle Aufgabenstellungen stehen ausführlich im der Datei *skript.pdf*
 
 **Versuch 1: Shell** <br/>
-Eine kleine Version der bekannten Shell.<br/> Inklusive Head
+Eine kleine Version der bekannten Shell.<br/>
+Aufgaben 1 bis 3: Shell.java
 <br/>
 **Versuch 2: Semaphoren** <br/>
 Mehrere Versuche rund um das Thema Semaphoren.<br/>
