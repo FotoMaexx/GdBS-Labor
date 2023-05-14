@@ -5,7 +5,7 @@ Alle Aufgabenstellungen stehen ausführlich im der Datei [skript.pdf](https://gi
 
 **Versuch 1: Shell** <br/>
 Eine kleine Version der bekannten Shell.<br/>
-Aufgaben 1 bis 3: Shell.java<br/>
+Aufgaben 1 bis 3: [Shell.java](https://github.com/FotoMaexx/GdBS-Labor/blob/main/Versuch1_Shell/shell.java)<br/>
 Aufgabe 4: Head.java<br/>
 <br/>
 **Versuch 2: Semaphoren** <br/>
