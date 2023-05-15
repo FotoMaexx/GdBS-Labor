@@ -64,12 +64,12 @@ class Shell {
         ArrayList<String> leftParams = new ArrayList<String>(input.length);
 
         for (int i = 0; i < input.length; i++) {
-            if(input[i].contains("<")) {
+            if(input[i].equals("<")) {
                 if (i + 1 < input.length) {
                     stdIn = input[i+1];
                     i++;
                 }
-            } else if(input[i].contains(">")) {
+            } else if(input[i].equals(">")) {
                 if(i + 1 < input.length) {
                     stdOut = input[i+1];
                     i++;

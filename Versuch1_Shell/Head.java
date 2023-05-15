@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 import static cTools.KernelWrapper.*;
 
 class Head {
@@ -24,62 +23,50 @@ class Head {
             String[] input = inputLine();
             if (input[0].equals("close")) {
                 close = false;
-            }
-            else {
-                if (input[0].equals("close")) {
-                    close = false;
-                }
-                if(input[0].equals("head")) {
+            } else {
+                if (input[0].equals("head")) {
                     int fd = 0;
                     int rd = 0;
                     int cl = 0;
                 }
-                if(input.length > 1) {
-                    for(int i=1; i<input.length; i++){
-                        if(i == 1) {
+                if (input.length > 1) {
+                    for (int i = 1; i < input.length; i++) {
+                        if (i == 1) {
                             if (input[1].charAt(0) == '-') {
-                                if(input[1].equals("--help")) {
+                                if (input[1].equals("--help")) {
                                     System.out.println("SYNOPSIS:");
                                     System.out.println("head [OPTION]... [FILE]...");
                                     System.out.println("example: head -c --bytes 5 <filename>");
                                     System.out.println("");
                                     System.out.println("DESCRIPTION:");
-                                    System.out.println("Print the first 10 lines of each FILE to standard output.  With more than one FILE, precede each with a header giving the file name.");
+                                    System.out.println(
+                                            "Print the first 10 lines of each FILE to standard output.  With more than one FILE, precede each with a header giving the file name.");
                                     System.out.println("");
                                     System.out.println("OPTIONS:");
                                     System.out.println("-c, --bytes NUM: print the first NUM bytes of each file");
-                                    System.out.println("-n, --lines NUM: print the first NUM lines instead of the first 10");
-                                    i=input.length;
-                                }
-                                else {
+                                    System.out.println(
+                                            "-n, --lines NUM: print the first NUM lines instead of the first 10");
+                                    i = input.length;
+                                } else {
                                     i++;
                                     i++;
                                 }
-                            }
-                            else {
+                            } else {
                                 filePath = checkFile(input, i);
                                 head(0, filePath, 10);
                             }
-                        }
-                        else {
-                            if (input[1].charAt(0) == '-' && i>3) {
-                                if(input[1].equals("-c")) {
-                                    if(input[2].equals("--bytes")) {
-                                        filePath = checkFile(input, i);
-                                        head(1, filePath, Integer.parseInt(input[3]));
-                                    }
-                                }
-                                else if(input[1].equals("-n")) {
-                                    if(input[2].equals("--lines")) {
-                                        filePath = checkFile(input, i);
-                                        head(2, filePath, Integer.parseInt(input[3]));
-                                    }
-                                }
-                                else{
+                        } else {
+                            if (input[1].charAt(0) == '-' && i > 3) {
+                                if (input[1].equals("-c") | input[1].equals("--bytes")) {
+                                    filePath = checkFile(input, i);
+                                    head(1, filePath, Integer.parseInt(input[3]));
+                                } else if (input[1].equals("-n") | input[1].equals("--lines")) {
+                                    filePath = checkFile(input, i);
+                                    head(2, filePath, Integer.parseInt(input[3]));
+                                } else {
                                     System.out.println("Syntax error.");
                                 }
-                            }
-                            else {
+                            } else {
                                 filePath = checkFile(input, i);
                                 head(0, filePath, 10);
                             }
@@ -87,7 +74,7 @@ class Head {
                     }
                 }
             }
-        }   
+        }
     }
 
     // Input and split words in array
@@ -110,35 +97,33 @@ class Head {
         int check = 0;
         byte a = (byte) 10;
 
-        if(opt == 0) {
+        if (opt == 0) {
             fd = open(path, O_RDWR);
-            rd = read(fd, buffer, buffer.length-1);
+            rd = read(fd, buffer, buffer.length - 1);
             cl = close(fd);
-            for(int k=0; k<buffer.length && check<10; k++){
+            for (int k = 0; k < buffer.length && check < 10; k++) {
                 if (buffer[k] == a) {
                     check++;
                 }
-                System.out.print((char)buffer[k]);
+                System.out.print((char) buffer[k]);
             }
-        }
-        else if(opt == 1) {
+        } else if (opt == 1) {
             fd = open(path, O_RDWR);
-            rd = read(fd, buffer, buffer.length-1);
+            rd = read(fd, buffer, buffer.length - 1);
             cl = close(fd);
-            for(int k=0; k<val; k++){
-                System.out.print((char)buffer[k]);
+            for (int k = 0; k < val; k++) {
+                System.out.print((char) buffer[k]);
             }
             System.out.println();
-        }
-        else if(opt == 2) {
+        } else if (opt == 2) {
             fd = open(path, O_RDWR);
-            rd = read(fd, buffer, buffer.length-1);
+            rd = read(fd, buffer, buffer.length - 1);
             cl = close(fd);
-            for(int k=0; k<buffer.length && check<val; k++){
+            for (int k = 0; k < buffer.length && check < val; k++) {
                 if (buffer[k] == a) {
                     check++;
                 }
-                System.out.print((char)buffer[k]);
+                System.out.print((char) buffer[k]);
             }
         }
     }
@@ -160,11 +145,11 @@ class Head {
                 continue;
             }
         }
-        
+
         // Get actual directory
         String startingdir = System.getProperty("user.dir");
         String pattern = input[field];
-        
+
         // replacing * with .* for regex
         if (pattern.contains("*")) {
             String[] parts = pattern.split("(?=\\*)");
@@ -189,7 +174,7 @@ class Head {
             }
         });
 
-        if(listFiles.length == 1) {
+        if (listFiles.length == 1) {
             return listFiles[0].getAbsolutePath();
         }
 
@@ -204,7 +189,7 @@ class Head {
     public static void main(String[] args) {
 
         Head h = new Head();
-    
+
         System.out.println("Leaving Head.");
         System.exit(0);
     }
